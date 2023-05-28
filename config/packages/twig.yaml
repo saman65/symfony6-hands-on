@@ -1,0 +1,6 @@
+twig:
+    default_path: '%kernel.project_dir%/templates' #%kernel.project_dir% is the root directory of the project and /templates is where the templates are held
+
+when@test:
+    twig:
+        strict_variables: true
