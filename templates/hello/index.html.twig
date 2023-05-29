@@ -3,8 +3,8 @@
 {% block body %}
 <div>
     {% if messages|length > 0 %}
-        {% for message in messages|slice(0, limit) %}
-            <div>{{ message.message }}</div>
+        {% for key,message in messages|slice(0, limit) %}
+            <div><a href="{{path('app_show_one', {id: key})}}">{{ message.message }}</a></div>
             {{ include('hello/_message.html.twig', {message: message}) }} {#It's very important to note that when you include a template, 
             everything inside the included template inherits all the data variables from the parent context.
             But it is better to pass the data to the included template by using curly braces#}
