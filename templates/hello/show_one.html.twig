@@ -4,7 +4,8 @@
 {# since the data variable is called message, we can now output it this way. #}
 <div>The current message is: </div>
 <div>
-<b>{{message}}</b>
+<b>{{message.message}}</b>
+{{ include('hello/_message.html.twig', {message: message}) }}
 </div>
 {% endblock %}
 {% block title%} Show each message {% endblock %} {# Here we changed the default title in base.html.twig to a new one #}

@@ -9,7 +9,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class HelloController extends AbstractController //AbstractController has useful methods like render() to render twig templates
 {
     private array $messages = [
-        "Hello", "Hi", "Bye"
+        ['message' => 'Hello!', 'created' => '2022/06/12'],
+        ['message' => 'Hi', 'created' => '2022/04/12'],
+        ['message' => 'Bye!', 'created' => '2023/05/12'],
     ];
     #[Route('/{limit<\d+>?3}', name: 'app_index')] //Route is a class and needs to be imported
     public function index(int $limit): Response
@@ -21,7 +23,8 @@ class HelloController extends AbstractController //AbstractController has useful
         //renders the twig templates and accepts two arguments. The first one is the twig template address which
         //is obligatory and the second one is the data to be passed to the template which is optional.
             [
-                'message' => implode(', ', array_slice($this->messages, 0, $limit))
+                'messages' => $this->messages,
+                'limit' => $limit
             ]
             );
     }
