@@ -39,15 +39,20 @@ class MicroPostController extends AbstractController
         specify the second parameter as being true so it will actually run the SQL query.*/
 
         return $this->render('micro_post/index.html.twig', [
-            'controller_name' => 'MicroPostController',
+            'posts' => $posts->findAll(), /* <= this is the kind of passing data to the template */
         ]);
     }
 
-    #[Route('micro-post/{post}', name: 'app-micro-post-show')]
+    #[Route('/micro-post/{post}', name: 'app-micro-post-show')]
     public function showOne(MicroPost $post): Response
     {
-        dd($post); /* This simple code is managed by sensio/framework-extra-bundle which has been installed.
-        It made the rguments simple too. We also could fetch the data using {title} for example instead of {post}
-         By default, no matter how you call the argument, the param convertor will look for the ID field of the micro post.*/
+        /*dd($post); <= This is to fetch data from the database. This simple code is managed by sensio/framework-extra-bundle which has been installed.
+        It made the arguments simple too. We also could fetch the data using {title} for example instead of {post}
+         By default, no matter how you call the argument, the param convertor will look for the ID field of the micro post.
+         if you want to fetch more or you want to filter data somehow, then you would still use the repository and its methods.*/
+
+         return $this->render('micro_post/show.html.twig', [ /* <= rendering a template for the showone action*/
+            'post' => $post, /* <= this is the kind of passing data to the template */
+        ]);
     }
 }
