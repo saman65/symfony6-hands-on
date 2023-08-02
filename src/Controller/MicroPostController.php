@@ -14,7 +14,7 @@ class MicroPostController extends AbstractController
     #[Route('/micro-post', name: 'app_micro_post')]
     public function index(MicroPostRepository $posts): Response #Here we put $posts as an optional argument for the class MicroPostRepository#
     {
-        dd($posts->findAll()); #To show all records in the table of micro-post#
+        //dd($posts->findAll()); #To show all records in the table of micro-post#
         // dd($posts->find(3)); #To show a specific record in the table of micro-post using the id as the argument#
         // dd($posts->findOneBy(['title'=>'Welcome to US!'])); #To show a specific record in the table of micro-post using a column=>value as the argument#
         // dd($posts->findBy(['title'=>'Welcome to US!'])); #To show all of the records with a soecific column=>value in the table of micro-post using a column=>value as the argument#
@@ -51,7 +51,7 @@ class MicroPostController extends AbstractController
          By default, no matter how you call the argument, the param convertor will look for the ID field of the micro post.
          if you want to fetch more or you want to filter data somehow, then you would still use the repository and its methods.*/
 
-         return $this->render('micro_post/show.html.twig', [ /* <= rendering a template for the showone action*/
+         return $this->render('micro_post/show_one.html.twig', [ /* <= rendering a template for the showone action*/
             'post' => $post, /* <= this is the kind of passing data to the template */
         ]);
     }

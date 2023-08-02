@@ -6,7 +6,7 @@
 <div>
     {% if posts|length > 0 %}
         {% for post in posts %}
-            <div><a href="{{path('app_micro_post_show', {post: post.id})}}">{{ post.title }}</a></div>
+            <div><a href="{{path('app_micro_post', {post: post.id})}}">{{ post.title }}</a></div>
         {% endfor %}
     {% else %}
         There is nothing here!
