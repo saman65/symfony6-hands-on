@@ -13,7 +13,7 @@ class HelloController extends AbstractController //AbstractController has useful
         ['message' => 'Hi', 'created' => '2022/04/12'],
         ['message' => 'Bye!', 'created' => '2023/05/12'],
     ];
-    #[Route('/{limit<\d+>?3}', name: 'app_index')] //Route is a class and needs to be imported
+    #[Route('/{limit<\d+>?3}', name: 'app_index', priority: 1)] //Route is a class and needs to be imported
     public function index(int $limit): Response
     {
         // return new Response(
