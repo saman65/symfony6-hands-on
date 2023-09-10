@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create New Post{% endblock %}
+
+{% block body %}
+    {#{{form(form)}} is enough to present a form but to have a cutomized form we need the other methods#}
+    {{ form_start(form) }}
+    {#{{ form_start(form, {action: 'https://google.com'}) here action or the destination can be customized if it is not the same page}}#}
+    <div>{{ form_errors(form) }}</div>
+    <div>{{ form_label(form.title, 'Please enter the post title') }}</div>
+    <div>{{ form_widget(form.title, {attr: {style: 'color: gray'}}) }}</div>{#arrt is a pre built parameter used. find more on twig documentation#}
+    <div>{{ form_label(form.text, 'Please enter the post text') }}</div>
+    <div>{{ form_widget(form.text, {attr: {style: 'color: gray'}}) }}</div>
+    <div><button type='submit'>Save</button></div>
+    {{ form_end(form) }}
+    </div>
+{% endblock %}

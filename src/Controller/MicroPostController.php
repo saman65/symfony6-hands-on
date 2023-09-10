@@ -8,6 +8,8 @@ use App\Repository\MicroPostRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Request;
 
 class MicroPostController extends AbstractController
 {
@@ -40,12 +42,14 @@ class MicroPostController extends AbstractController
 
         return $this->render('micro_post/index.html.twig', [
             'posts' => $posts->findAll(), /* <= this is the kind of passing data to the template */
-        ]);
+        ]); #findAll() is Repository method#
     }
 
     #[Route('/micro-post/{post}', name: 'app-micro-post-show')]
     public function showOne(MicroPost $post): Response
-    {
+    {/* No matter what is inside {post} but must be same as $post and param converter does the rest and looks for the primary key which is id.
+    It is possible to use the other columns like title inside the {} .But the normal way is using repository instead of the entity */
+
         /*dd($post); <= This is to fetch data from the database. This simple code is managed by sensio/framework-extra-bundle which has been installed.
         It made the arguments simple too. We also could fetch the data using {title} for example instead of {post}
          By default, no matter how you call the argument, the param convertor will look for the ID field of the micro post.
@@ -53,6 +57,40 @@ class MicroPostController extends AbstractController
 
          return $this->render('micro_post/show_one.html.twig', [ /* <= rendering a template for the showone action*/
             'post' => $post, /* <= this is the kind of passing data to the template */
+        ]);
+    }
+
+    #[Route('micro-post/add', name: 'app_micro_post_add', priority:2)]
+    public function add(Request $request, MicroPostRepository $posts): Response{
+        $microPost = new MicroPost();
+        $form = $this->createFormBuilder($microPost)
+            ->add('title')
+            ->add('text')
+            //->add('Submit', SubmitType::class, ['label' => 'Save']) //It is prettier to add button inside twig using html
+            ->getForm(); /* up to here (creating the form), Request $request were not needed as the arguments but needed for after submision */
+
+            $form->handleRequest($request); /* Request $request arguments are needed to handle here */
+            if($form->isSubmitted() && $form->isValid()){
+                $post = $form->getData();
+                //dd($post);
+                $post->setCreated(new DateTime());
+                $posts->save($post, true); /* This is why we added the second argument i.e Repository class */
+                
+                //adding a flash
+                $this->addFlash('success', 'Your micro post has been added'); /* addFlash is a method of AbstractController. 
+                addFlash() saves the key and the value in the session. The key can be any word but here success describe the message well
+                Then we can retrive the value using app.flaashes in the twig file.
+                We set its rendering in base.html.twig */
+                
+                //redirecting
+                return $this->redirectToRoute('app_micro_post'); 
+                /* It cab be redirected to any url using redirect() method. But redirectToRoute() redirects to the predefined routes */
+            }
+
+        return $this->renderForm(
+            'micro_post/add.html.twig',
+            [
+                'form' => $form
         ]);
     }
 }

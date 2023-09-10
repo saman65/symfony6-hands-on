@@ -36,6 +36,8 @@ class VinylController extends AbstractController
         } else {
             $title = 'All Genres';
         }
-        return new Response($title);
+        return $this->render('vinyl/browse.html.twig', [
+            'genre' => $title
+            ]);
     }
 }

@@ -32,5 +32,6 @@ class AppFixtures extends Fixture
         $manager->persist($microPost3);
 
         $manager->flush();
+        //To execute sending the above fake data to the database wew need to run this command: symfony console doctrine:fixtures:load
     }
 }
