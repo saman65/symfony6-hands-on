@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use DateTime;
 use App\Entity\MicroPost;
+use App\Form\MicroPostType;
 use App\Repository\MicroPostRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -62,13 +63,14 @@ class MicroPostController extends AbstractController
 
     #[Route('micro-post/add', name: 'app_micro_post_add', priority:2)]
     public function add(Request $request, MicroPostRepository $posts): Response{
-        $microPost = new MicroPost();
-        $form = $this->createFormBuilder($microPost)
-            ->add('title')
-            ->add('text')
-            //->add('Submit', SubmitType::class, ['label' => 'Save']) //It is prettier to add button inside twig using html
-            ->getForm(); /* up to here (creating the form), Request $request were not needed as the arguments but needed for after submision */
+        // $microPost = new MicroPost(); //These lines were used before creating the form using make:form and that was time consuming
+        // $form = $this->createFormBuilder($microPost)
+            // ->add('title')
+            // ->add('text')
+            // //->add('Submit', SubmitType::class, ['label' => 'Save']) //It is prettier to add button inside twig using html
+            // ->getForm(); /* up to here (creating the form), Request $request were not needed as the arguments but needed for after submision */
 
+            $form = $this->createForm(MicroPostType::class, new MicroPost);
             $form->handleRequest($request); /* Request $request arguments are needed to handle here */
             if($form->isSubmitted() && $form->isValid()){
                 $post = $form->getData();
@@ -89,6 +91,39 @@ class MicroPostController extends AbstractController
 
         return $this->renderForm(
             'micro_post/add.html.twig',
+            [
+                'form' => $form
+        ]);
+    }
+
+    #[Route('micro-post/{post}/edit', name: 'app_micro_post_edit')]
+    public function edit(MicroPost $post, Request $request, MicroPostRepository $posts): Response{
+            //$form = $this->createFormBuilder($post)
+            //->add('title')
+            //->add('text')
+            //->add('Submit', SubmitType::class, ['label' => 'Save']) //It is prettier to add button inside twig using html
+            //->getForm(); /* up to here (creating the form), Request $request were not needed as the arguments but needed for after submision */
+            
+            $form = $this->createForm(MicroPostType::class, $post);
+            $form->handleRequest($request); /* Request $request arguments are needed to handle here */
+            if($form->isSubmitted() && $form->isValid()){
+                $post = $form->getData();
+                //dd($post);
+                $posts->save($post, true); /* This is why we added the second argument i.e Repository class */
+                
+                //adding a flash
+                $this->addFlash('success', 'Your micro post has been updated'); /* addFlash is a method of AbstractController. 
+                addFlash() saves the key and the value in the session. The key can be any word but here success describe the message well
+                Then we can retrive the value using app.flaashes in the twig file.
+                We set its rendering in base.html.twig */
+                
+                //redirecting
+                return $this->redirectToRoute('app_micro_post'); 
+                /* It cab be redirected to any url using redirect() method. But redirectToRoute() redirects to the predefined routes */
+            }
+
+        return $this->renderForm(
+            'micro_post/edit.html.twig',
             [
                 'form' => $form
         ]);
