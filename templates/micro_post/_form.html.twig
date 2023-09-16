@@ -1,5 +1,5 @@
-    {#{{form(form)}} is enough to present a form but to have a cutomized form we need the other methods#}
-    {{ form_start(form) }}
+    {#{{form(form)}} {#is enough to present a form but to have a cutomized form we need the other methods#}
+    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }} {#we added , {attr: {novalidate: 'novalidate'}} to diactivate front end validation (required=required) then we can see the back-end validation#}
     {#{{ form_start(form, {action: 'https://google.com'}) here action or the destination can be customized if it is not the same page}}#}
     <div>{{ form_errors(form) }}
     {{ form_label(form.title, 'Please enter the post title', {label_attr: {class: 'block text-sm text-gray-700 dark:text-gray-300 font-medium'}}) }}

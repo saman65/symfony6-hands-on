@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\twig;
 
 class VinylController extends AbstractController
 {
-    #[Route('/', name: 'app_homepage', priority: 2)]
+    #[Route('/', name: 'app_homepage', priority: 1)]
     public function homepage(Environment $twig): Response
     {
         $tracks = [

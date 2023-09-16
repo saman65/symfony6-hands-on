@@ -3,14 +3,17 @@
 namespace App\Controller;
 
 use DateTime;
+use App\Entity\Comment;
 use App\Entity\MicroPost;
+use App\Form\CommentType;
 use App\Form\MicroPostType;
+use App\Repository\CommentRepository;
 use App\Repository\MicroPostRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MicroPostController extends AbstractController
 {
@@ -42,11 +45,12 @@ class MicroPostController extends AbstractController
         specify the second parameter as being true so it will actually run the SQL query.*/
 
         return $this->render('micro_post/index.html.twig', [
-            'posts' => $posts->findAll(), /* <= this is the kind of passing data to the template */
+            // 'posts' => $posts->findAll(), /* <= this is the kind of passing data to the template */
+            'posts' => $posts->findAllWithComments()
         ]); #findAll() is Repository method#
     }
 
-    #[Route('/micro-post/{post}', name: 'app-micro-post-show')]
+    #[Route('/micro-post/{post}', name: 'app_micro_post_show')]
     public function showOne(MicroPost $post): Response
     {/* No matter what is inside {post} but must be same as $post and param converter does the rest and looks for the primary key which is id.
     It is possible to use the other columns like title inside the {} .But the normal way is using repository instead of the entity */
@@ -72,7 +76,7 @@ class MicroPostController extends AbstractController
 
             $form = $this->createForm(MicroPostType::class, new MicroPost);
             $form->handleRequest($request); /* Request $request arguments are needed to handle here */
-            if($form->isSubmitted() && $form->isValid()){
+            if($form->isSubmitted() && $form->isValid()){ /* isValid() is always true unless we add some constraints in the netity file like #[Assert\NotBlank()] */
                 $post = $form->getData();
                 //dd($post);
                 $post->setCreated(new DateTime());
@@ -126,6 +130,36 @@ class MicroPostController extends AbstractController
             'micro_post/edit.html.twig',
             [
                 'form' => $form
+        ]);
+    }
+
+    #[Route('micro-post/{post}/comment', name: 'app_micro_post_comment')]
+    public function addComment(MicroPost $post, Request $request, CommentRepository $comments): Response{
+            
+            $form = $this->createForm(CommentType::class, new Comment());
+            $form->handleRequest($request); /* Request $request arguments are needed to handle here */
+            if($form->isSubmitted() && $form->isValid()){
+                $comment = $form->getData();
+                $comment->setPost($post);
+                $comments->save($comment, true);
+                
+                //adding a flash
+                $this->addFlash('success', 'Your comment has been updated');
+                //redirecting
+                return $this->redirectToRoute(
+                    'app_micro_post_show',
+                    [
+                        'post' => $post->getId()
+                    ]
+                ); 
+
+            }
+
+        return $this->renderForm(
+            'micro_post/comment.html.twig',
+            [
+                'form' => $form,
+                'post' => $post
         ]);
     }
 }

@@ -2,6 +2,10 @@ twig:
     default_path: '%kernel.project_dir%/templates' #%kernel.project_dir% is the root directory of the project and /templates is where the templates are held
     # config/packages/twig.yaml
     #form_themes: ['bootstrap_5_horizontal_layout.html.twig']
+    form_themes: ['form/fields.html.twig'] #this is a relative path to the path of templates folder.
+    #and this is a cotumized theme. We can also use the Symfony themes for exmple the commented above (bootstrap_5)
+    #The first thing that you need to perform from validation is to install the validator component in symphony
+    #and you can do that by running composer require symphony slash validator.
 when@test:
     twig:
         strict_variables: true
