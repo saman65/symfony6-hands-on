@@ -16,7 +16,13 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-
+            #To set the authentication part of login we added the three lines below#
+            form_login:
+                login_path: app_login
+                check_path: app_login
+            logout:
+                path: app_logout
+                target: app_login
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -27,7 +33,12 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
+          - { path: ^/micro-post/add, roles: IS_AUTHENTICATED_FULLY } #This is an alternative way for #[IsGranted('IS_AUTHENTICATED_FULLY')] or $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY'); inside the controller 
         # - { path: ^/profile, roles: ROLE_USER }
+    role_hierarchy: #This part specifies the inheritances. For example ROLE_ADMIN inherits everything that ROLE_EDITOR can do
+        ROLE_ADMIN: [ROLE_EDITOR]
+        ROLE_EDITOR: [ROLE_COMMENTER]
+        ROLE_COMMENTER: [ROLE_USER]
 
 when@test:
     security:

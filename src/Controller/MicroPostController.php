@@ -9,12 +9,16 @@ use App\Form\CommentType;
 use App\Form\MicroPostType;
 use App\Repository\CommentRepository;
 use App\Repository\MicroPostRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/* you can also add the #[IsGranted('IS_AUTHENTICATED_FULLY')] check on top of the class so it can be added right here. 
+And when you do that, then every single action in this controller will require the user to be authenticated or 
+whatever other role you might require. */
 class MicroPostController extends AbstractController
 {
     #[Route('/micro-post', name: 'app_micro_post')]
@@ -29,7 +33,7 @@ class MicroPostController extends AbstractController
         // $microPost = new MicroPost();
         // $microPost->setTitle('It comes from controller!');
         // $microPost->setText('Hi!');
-        // $microPost->setCreated(new DateTime()); #DateTime() class should be imported#
+        // $microPost->setCreated(new DateTime()); #We do not need this aanumore as we already added this to the MicroPost entity through  constructor#
         // $posts->save($microPost, true);
 
          /* below is to update a record in the databse */
@@ -66,6 +70,11 @@ class MicroPostController extends AbstractController
     }
 
     #[Route('micro-post/add', name: 'app_micro_post_add', priority:2)]
+    #[IsGranted('ROLE_ADMIN')] //Better way is using access_control inside security.yaml
+    /* The difference between using this PHP 8 attribute and calling the method deny access on IsGranted() directly 
+    inside your controller action is that when you use the method, it's up to you to decide at which point you deny 
+    the access, which means that you can do something before you deny the access. For example, 
+    you can make some request or you can log something when using the attribute, the access is denied immediately. */
     public function add(Request $request, MicroPostRepository $posts): Response{
         // $microPost = new MicroPost(); //These lines were used before creating the form using make:form and that was time consuming
         // $form = $this->createFormBuilder($microPost)
@@ -73,13 +82,15 @@ class MicroPostController extends AbstractController
             // ->add('text')
             // //->add('Submit', SubmitType::class, ['label' => 'Save']) //It is prettier to add button inside twig using html
             // ->getForm(); /* up to here (creating the form), Request $request were not needed as the arguments but needed for after submision */
-
+        //dd($this->getUser()); //<=This is just to show the current user and it is not used in production 
+            // $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY'); //Better way is using access_control inside security.yaml
+            //$this->isGranted();
             $form = $this->createForm(MicroPostType::class, new MicroPost);
             $form->handleRequest($request); /* Request $request arguments are needed to handle here */
             if($form->isSubmitted() && $form->isValid()){ /* isValid() is always true unless we add some constraints in the netity file like #[Assert\NotBlank()] */
                 $post = $form->getData();
                 //dd($post);
-                $post->setCreated(new DateTime());
+                $post->setAuthor($this->getUser());
                 $posts->save($post, true); /* This is why we added the second argument i.e Repository class */
                 
                 //adding a flash
@@ -101,18 +112,20 @@ class MicroPostController extends AbstractController
     }
 
     #[Route('micro-post/{post}/edit', name: 'app_micro_post_edit')]
+    #[IsGranted('ROLE_EDITOR')]
     public function edit(MicroPost $post, Request $request, MicroPostRepository $posts): Response{
             //$form = $this->createFormBuilder($post)
             //->add('title')
             //->add('text')
             //->add('Submit', SubmitType::class, ['label' => 'Save']) //It is prettier to add button inside twig using html
             //->getForm(); /* up to here (creating the form), Request $request were not needed as the arguments but needed for after submision */
-            
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
             $form = $this->createForm(MicroPostType::class, $post);
             $form->handleRequest($request); /* Request $request arguments are needed to handle here */
             if($form->isSubmitted() && $form->isValid()){
                 $post = $form->getData();
                 //dd($post);
+                $post->setAuthor($this->getUser());
                 $posts->save($post, true); /* This is why we added the second argument i.e Repository class */
                 
                 //adding a flash
@@ -129,11 +142,13 @@ class MicroPostController extends AbstractController
         return $this->renderForm(
             'micro_post/edit.html.twig',
             [
-                'form' => $form
+                'form' => $form,
+                'post' => $post
         ]);
     }
 
     #[Route('micro-post/{post}/comment', name: 'app_micro_post_comment')]
+    #[IsGranted('ROLE_COMMENTER')]
     public function addComment(MicroPost $post, Request $request, CommentRepository $comments): Response{
             
             $form = $this->createForm(CommentType::class, new Comment());
@@ -141,6 +156,7 @@ class MicroPostController extends AbstractController
             if($form->isSubmitted() && $form->isValid()){
                 $comment = $form->getData();
                 $comment->setPost($post);
+                $comment->setAuthor($this->getUser());
                 $comments->save($comment, true);
                 
                 //adding a flash

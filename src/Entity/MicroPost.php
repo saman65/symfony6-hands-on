@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\MicroPostRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\MicroPostRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 # how do you say to symphony, what validation constraints do you need? So this is actually pretty simple.
 #There are some PHP eight attributes that you can add on your class fields to tell the validator component 
 #how a specific field should be validated. We first add the use below:
@@ -48,10 +49,15 @@ class MicroPost
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'liked')]
     private Collection $likeBy;
 
+    #[ORM\ManyToOne(inversedBy: 'posts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $author = null;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->likeBy = new ArrayCollection();
+        $this->created =new DateTime();
     }
 
     public function getId(): ?int
@@ -145,6 +151,18 @@ class MicroPost
     public function removeLikeBy(User $likeBy): static
     {
         $this->likeBy->removeElement($likeBy);
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): static
+    {
+        $this->author = $author;
 
         return $this;
     }

@@ -1,14 +1,15 @@
-<div class='mb-4'><div class='text-xl'><a href="{{path('app_micro_post_show', {post: post.id})}}">{{ post.title }}</a></div></div>
+<div class='mb-4'><div class='text-xl'><a href="{{path('app_micro_post_show', {post: post.id})}}">{{ post.title }}</a></div>
 {#post: is used to pass post.id to the Route (parameterName: parameterValue).
 In fact there is {post} in the link of the Route and we need to write post: here if we want to pass post.id to it#}
-<div class='text-md dark:text-gray-400'>{{ post.text }}</div>
-<div class='text-gray-500 dark:text-gray-400'>{{ post.created | date('M j, Y') }}</div>
-<a href='#'>Like<span class='px-2 rounded-md bg-gray-200 dark:bg-gray-700'>0</span>
-</a>
-<div class='text-sm text-gray-500 dark:text-gray-400'>
-    <a href='#'>user@mail.com</a>
-</div>
-<div class='flex'>
-    <a href='{{ path('app_micro_post_edit', {post: post.id}) }}' class='mr-2' >Edit Post</a><br>
-    <a href='{{ path('app_micro_post_comment', {post: post.id}) }}'>Comment <span class='px-2 rounded-md bg-gray-200 dark:bg-gray-700'>{{post.getComments.count}}</span></a>
+    <div class='text-md dark:text-gray-400'>{{ post.text }}</div>
+    <div class='text-gray-500 dark:text-gray-400'>{{ post.created | date('M j, Y') }}</div>
+    <a href='#'>Like<span class='px-2 rounded-md bg-gray-200 dark:bg-gray-700'>0</span>
+    </a>
+    <div class='text-sm text-gray-500 dark:text-gray-400'>
+        <a href='#'>{{ post.author.email }}</a>
+    </div>
+    <div class='flex'>
+        <a href='{{ path('app_micro_post_edit', {post: post.id}) }}' class='mr-2' >Edit Post</a><br>
+        <a href='{{ path('app_micro_post_comment', {post: post.id}) }}'>Comment <span class='px-2 rounded-md bg-gray-200 dark:bg-gray-700'>{{post.getComments.count}}</span></a>
+    </div>
 </div>
