@@ -55,6 +55,7 @@ class MicroPostController extends AbstractController
     }
 
     #[Route('/micro-post/{post}', name: 'app_micro_post_show')]
+    #[IsGranted(MicroPost::VIEW, 'post')] 
     public function showOne(MicroPost $post): Response
     {/* No matter what is inside {post} but must be same as $post and param converter does the rest and looks for the primary key which is id.
     It is possible to use the other columns like title inside the {} .But the normal way is using repository instead of the entity */
@@ -112,16 +113,18 @@ class MicroPostController extends AbstractController
     }
 
     #[Route('micro-post/{post}/edit', name: 'app_micro_post_edit')]
-    #[IsGranted('ROLE_EDITOR')]
+    //#[IsGranted('ROLE_EDITOR')]
+    #[IsGranted(MicroPost::EDIT, 'post')]
     public function edit(MicroPost $post, Request $request, MicroPostRepository $posts): Response{
             //$form = $this->createFormBuilder($post)
             //->add('title')
             //->add('text')
             //->add('Submit', SubmitType::class, ['label' => 'Save']) //It is prettier to add button inside twig using html
             //->getForm(); /* up to here (creating the form), Request $request were not needed as the arguments but needed for after submision */
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+            //$this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
             $form = $this->createForm(MicroPostType::class, $post);
             $form->handleRequest($request); /* Request $request arguments are needed to handle here */
+            $this->denyAccessUnlessGranted(MicroPost::EDIT, $post); //A similar methid to #[IsGranted(MicroPost::EDIT, 'post')] which is above the action
             if($form->isSubmitted() && $form->isValid()){
                 $post = $form->getData();
                 //dd($post);
