@@ -33,8 +33,8 @@ class ProductController extends AbstractController
         // $product->setDescription('modern and  large');
         // $products->save($product, true);
 
-        $product = $products->find(12);
-        $products->remove($product, true);
+        // $product = $products->find(4);
+        // $products->remove($product, true);
 
         
         return new Response(('Saved new product with id: '.$product->getId()));

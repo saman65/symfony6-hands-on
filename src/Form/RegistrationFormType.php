@@ -6,6 +6,7 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -26,11 +27,22 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('plainPassword', PasswordType::class, [
+            ->add('plainPassword', RepeatedType::class, [ //The second argument was PasswordType and we changed it to RepeatedType as we need two inputs for password
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
+                //We displaced PasswordType::class from the second argument to below to have two inputs for password
+                'type' => PasswordType::class,
                 'mapped' => false,
+                'invalid_message' => 'The passwords must match', // <= We added this to check if both pass inputs are identical
                 'attr' => ['autocomplete' => 'new-password'],
+                'first_options' => [
+                    'label' => 'Password',
+                    'mapped' => false
+                ],
+                'second_options' => [
+                    'label' => 'Repeated Password',
+                    'mapped' => false
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter a password',

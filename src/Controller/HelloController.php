@@ -32,7 +32,7 @@ class HelloController extends AbstractController //AbstractController has useful
 So we can say that MicroPost has comments, not that a comment has a micropost. */
 
 //fetch a post data and then save the comment:
-        $post = $posts->find(13);
+        // $post = $posts->find(13);
         // $post->getComments()->count();
         // $comment = $post->getComments()[0];
         // $post->removeComment($comment);
@@ -58,15 +58,16 @@ So we can say that MicroPost has comments, not that a comment has a micropost. *
 
             // $profile = $profiles->find(1);
             // $profiles->remove($profile, true);
+            return $this->redirectToRoute('app_micro_post'); 
 
-        return $this->render('hello/index.html.twig', //render() is a method that comes with the AbstractController class which 
-        //renders the twig templates and accepts two arguments. The first one is the twig template address which
-        //is obligatory and the second one is the data to be passed to the template which is optional.
-            [
-                'messages' => $this->messages,
-                'limit' => 3
-            ]
-            );
+        // return $this->render('hello/index.html.twig', //render() is a method that comes with the AbstractController class which 
+        // //renders the twig templates and accepts two arguments. The first one is the twig template address which
+        // //is obligatory and the second one is the data to be passed to the template which is optional.
+        //     [
+        //         'messages' => $this->messages,
+        //         'limit' => 3
+        //     ]
+        //     );
     }
     #[Route('/messages/{id<\d+>}', name: 'app_show_one')]
     public function showOne(int $id): Response
