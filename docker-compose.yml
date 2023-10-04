@@ -15,3 +15,9 @@ services:
     restart: always
     ports:
       - 8080:8080
+    #Blow was added from docker-compose.overeride.yml and that file was created after installing the mailer bundle
+  mailer:
+    image: schickling/mailcatcher
+    ports:
+      - 1080:1080
+      - 1025:1025

@@ -52,13 +52,13 @@ class MicroPostVoter extends Voter
                 return $isAuth 
                 && (
                     $subject->getAuthor()->getId() === $user->getId() ||
-                    $this->security->isGranted('ROLE_ADMIN')
+                    $this->security->isGranted('ROLE_EDITOR')
                 );
             case MicroPost::VIEW:
                 // logic to determine if the user can VIEW
                 // return true or false
                 // break; //We commented break because we want everyone to see the posts
-                return false; //We added this return since we want everyone to see the micro posts
+                return true; //We added this return since we want everyone to see the micro posts
         }
 
         return false;
