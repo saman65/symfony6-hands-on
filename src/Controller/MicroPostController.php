@@ -71,7 +71,7 @@ class MicroPostController extends AbstractController
     }
 
     #[Route('micro-post/add', name: 'app_micro_post_add', priority:2)]
-    #[IsGranted('ROLE_ADMIN')] //Better way is using access_control inside security.yaml
+    #[IsGranted('ROLE_WRITER')] //Better way is using access_control inside security.yaml
     /* The difference between using this PHP 8 attribute and calling the method deny access on IsGranted() directly 
     inside your controller action is that when you use the method, it's up to you to decide at which point you deny 
     the access, which means that you can do something before you deny the access. For example, 

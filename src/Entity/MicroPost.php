@@ -49,7 +49,7 @@ class MicroPost
     private Collection $comments;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'liked')]
-    private Collection $likeBy;
+    private Collection $likedBy;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
@@ -58,7 +58,7 @@ class MicroPost
     public function __construct()
     {
         $this->comments = new ArrayCollection();
-        $this->likeBy = new ArrayCollection();
+        $this->likedBy = new ArrayCollection();
         $this->created =new DateTime();
     }
 
@@ -136,23 +136,23 @@ class MicroPost
     /**
      * @return Collection<int, User>
      */
-    public function getLikeBy(): Collection
+    public function getLikedBy(): Collection
     {
-        return $this->likeBy;
+        return $this->likedBy;
     }
 
-    public function addLikeBy(User $likeBy): static
+    public function addLikeBy(User $likedBy): static
     {
-        if (!$this->likeBy->contains($likeBy)) {
-            $this->likeBy->add($likeBy);
+        if (!$this->likedBy->contains($likedBy)) {
+            $this->likedBy->add($likedBy);
         }
 
         return $this;
     }
 
-    public function removeLikeBy(User $likeBy): static
+    public function removeLikeBy(User $likedBy): static
     {
-        $this->likeBy->removeElement($likeBy);
+        $this->likedBy->removeElement($likedBy);
 
         return $this;
     }

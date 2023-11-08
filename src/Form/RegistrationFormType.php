@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Form\UserProfileType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -55,7 +56,10 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-        ;
+            -> add('userProfile', UserProfileType::class);
+    /* We want to embed this user profile form inside registration form for which we only need to call this add 
+    method of the form specifying the field, which is user profile, that is the field on the user entity and specify 
+    the type, bank user profile type. This is helpful to create reusable forms*/
     }
 
     public function configureOptions(OptionsResolver $resolver): void

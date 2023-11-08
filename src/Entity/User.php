@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -49,6 +50,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $bannedUntil = null;
+
     public function __construct()
     {
         $this->liked = new ArrayCollection();
@@ -91,6 +95,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
+        if($this->isVerified()){/* We added this manually since we don't want to add this ROLE_WRITER to the royal hierarchy 
+            in security.yaml as this would mean that once you get the commander role, then you suddenly get verified, 
+            or at least you are treated as a verified user, and we don't want that. nd we do not want to add this 
+            to the database as it removes the former roles and actully we do not need it in the database as changing this 
+            in the future is easier in the project than in the database*/
+            $roles[] = "ROLE_WRITER";
+        }
 
         return array_unique($roles);
     }
@@ -238,6 +249,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getBannedUntil(): ?\DateTimeInterface
+    {
+        return $this->bannedUntil;
+    }
+
+    public function setBannedUntil(?\DateTimeInterface $bannedUntil): static
+    {
+        $this->bannedUntil = $bannedUntil;
 
         return $this;
     }

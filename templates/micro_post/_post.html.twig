@@ -3,13 +3,23 @@
 In fact there is {post} in the link of the Route and we need to write post: here if we want to pass post.id to it#}
     <div class='text-md dark:text-gray-400'>{{ post.text }}</div>
     <div class='text-gray-500 dark:text-gray-400'>{{ post.created | date('M j, Y') }}</div>
-    <a href='#'>Like<span class='px-2 rounded-md bg-gray-200 dark:bg-gray-700'>0</span>
+
+    {% if post.likedBy.contains(app.user) %} {# <= if likedBy collection contains the current user dysplay likes#}
+    <a href='{{ path('app_unlike', { id: post.id }) }}'>Unlike<span class='px-2 rounded-md bg-gray-200 dark:bg-gray-700'>
+    {{ post.likedBy.count }}</span>
     </a>
+    {% else %}
+    <a href='{{ path('app_like', { id: post.id }) }}'>Like<span class='px-2 rounded-md bg-gray-200 dark:bg-gray-700'>
+    {{ post.likedBy.count }}</span>
+    </a>
+    {% endif %}
+
     <div class='text-sm text-gray-500 dark:text-gray-400'>
         <a href='#'>{{ post.author.email }}</a>
     </div>
     <div class='flex'>
         <a href='{{ path('app_micro_post_edit', {post: post.id}) }}' class='mr-2' >Edit Post</a><br>
-        <a href='{{ path('app_micro_post_comment', {post: post.id}) }}'>Comment <span class='px-2 rounded-md bg-gray-200 dark:bg-gray-700'>{{post.getComments.count}}</span></a>
+        <a href='{{ path('app_micro_post_comment', {post: post.id}) }}'>Comment 
+        <span class='px-2 rounded-md bg-gray-200 dark:bg-gray-700'>{{post.getComments.count}}</span></a>
     </div>
 </div>
